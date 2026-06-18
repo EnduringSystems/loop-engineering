@@ -1,12 +1,46 @@
 #!/usr/bin/env bash
-# loopctl wrapper — run from any directory.
-# Usage: loopctl [--blackboard PATH] [command] [args...]
+# loopctl wrapper — call from any host directory.
+# Translates --blackboard HOST_PATH into a container volume mount + path.
+# Usage: loopctl [--blackboard HOST_PATH] [command] [args...]
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
+# Pull out --blackboard before passing anything else through
+BLACKBOARD_HOST=""
+PASSTHROUGH=()
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --blackboard|-b)
+            BLACKBOARD_HOST="$(cd "$2" && pwd)"
+            shift 2
+            ;;
+        --blackboard=*)
+            BLACKBOARD_HOST="$(cd "${1#*=}" && pwd)"
+            shift
+            ;;
+        *)
+            PASSTHROUGH+=("$1")
+            shift
+            ;;
+    esac
+done
+
+EXTRA_VOL=()
+CONTAINER_BB=()
+if [[ -n "$BLACKBOARD_HOST" ]]; then
+    EXTRA_VOL=(-v "${BLACKBOARD_HOST}:/bb")
+    CONTAINER_BB=(--blackboard /bb)
+fi
+
+# Join args safely
+INNER_ARGS="${CONTAINER_BB[*]+"${CONTAINER_BB[*]}"} ${PASSTHROUGH[*]+"${PASSTHROUGH[*]}"}"
+
 exec docker compose \
-  -f "$REPO_DIR/docker-compose.yml" \
-  --project-directory "$REPO_DIR" \
-  run --rm cli \
-  bash -c "pip install -q -e /workspace/packages/core -e /workspace/packages/cli && loopctl $*"
+    -f "$REPO_DIR/docker-compose.yml" \
+    --project-directory "$REPO_DIR" \
+    run --rm \
+    "${EXTRA_VOL[@]+"${EXTRA_VOL[@]}"}" \
+    cli \
+    bash -c "pip install -q -e /workspace/packages/core -e /workspace/packages/cli \
+             && loopctl $INNER_ARGS"
