@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# loopctl wrapper — run from any directory.
+# Usage: loopctl [--blackboard PATH] [command] [args...]
+set -euo pipefail
+
+REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+
+exec docker compose \
+  -f "$REPO_DIR/docker-compose.yml" \
+  --project-directory "$REPO_DIR" \
+  run --rm cli \
+  bash -c "pip install -q -e /workspace/packages/core -e /workspace/packages/cli && loopctl $*"
