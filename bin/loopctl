@@ -4,7 +4,14 @@
 # Usage: loopctl [--blackboard HOST_PATH] [command] [args...]
 set -euo pipefail
 
-REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+# Resolve symlinks to find the real script location
+_SOURCE="$0"
+while [ -L "$_SOURCE" ]; do
+    _DIR="$(cd -P "$(dirname "$_SOURCE")" && pwd)"
+    _SOURCE="$(readlink "$_SOURCE")"
+    [[ "$_SOURCE" != /* ]] && _SOURCE="$_DIR/$_SOURCE"
+done
+REPO_DIR="$(cd -P "$(dirname "$_SOURCE")/.." && pwd)"
 
 # Pull out --blackboard before passing anything else through
 BLACKBOARD_HOST=""
