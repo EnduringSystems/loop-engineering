@@ -8,10 +8,6 @@ x-workspace: &workspace
     - .:/workspace
   working_dir: /workspace
   environment:
-    LOOPCTL_BLACKBOARD: /workspace/.claude/blackboard
-    BLACKBOARD_ROOT: /workspace/.claude/blackboard
-    FEATURES_FILE: /workspace/.claude/blackboard/state/features.json
-    EVENTS_LOG: /workspace/.claude/blackboard/events/loop.log
     PYTHONDONTWRITEBYTECODE: "1"
     PYTHONUNBUFFERED: "1"
 
@@ -28,9 +24,7 @@ services:
   #
   cli:
     <<: *workspace
-    command: >
-      bash -c "pip install -q -e /workspace/packages/core -e /workspace/packages/cli
-               && loopctl"
+    command: loopctl
     stdin_open: true
     tty: true
 
