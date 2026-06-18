@@ -1,0 +1,53 @@
+name: loop-engineering
+
+x-workspace: &workspace
+  build:
+    context: .
+    dockerfile: Dockerfile
+  volumes:
+    - .:/workspace
+  working_dir: /workspace
+  environment:
+    LOOPCTL_BLACKBOARD: /workspace/.claude/blackboard
+    BLACKBOARD_ROOT: /workspace/.claude/blackboard
+    FEATURES_FILE: /workspace/.claude/blackboard/state/features.json
+    EVENTS_LOG: /workspace/.claude/blackboard/events/loop.log
+    PYTHONDONTWRITEBYTECODE: "1"
+    PYTHONUNBUFFERED: "1"
+
+services:
+  # ── loopctl — founder CLI dashboard ─────────────────────────────────────────
+  #
+  # Usage:
+  #   docker compose run --rm cli loopctl           # live dashboard
+  #   docker compose run --rm cli loopctl status    # one-shot snapshot
+  #   docker compose run --rm cli loopctl steer cto-orchestrator "Prioritize cert chain"
+  #   docker compose run --rm cli loopctl resolve esc-abc123 "Approved for beta"
+  #   docker compose run --rm cli loopctl broadcast "All loops: re-read aspirational docs"
+  #   docker compose run --rm cli loopctl logs -f
+  #
+  cli:
+    <<: *workspace
+    command: >
+      bash -c "pip install -q -e /workspace/packages/core -e /workspace/packages/cli
+               && loopctl"
+    stdin_open: true
+    tty: true
+
+  # ── web dashboard — to be built by the dev loops ────────────────────────────
+  #
+  # This service is a placeholder. When the web package is built, update this
+  # to run `npm run dev` (or the appropriate command).
+  # The web dashboard reads the same blackboard root as the CLI.
+  #
+  web:
+    <<: *workspace
+    working_dir: /workspace/packages/web
+    command: >
+      bash -c "echo 'Web dashboard not yet built — see packages/web/README.md for the build spec.'
+               && echo 'Run the CLI with: docker compose run --rm cli loopctl'
+               && sleep infinity"
+    ports:
+      - "4000:4000"
+    profiles:
+      - web   # opt-in: `docker compose --profile web up web`
