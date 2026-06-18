@@ -31,5 +31,6 @@ packages/web/.env.local
 *.swp
 *.swo
 
-# Docker
-*.log
+# Docker / session logs (NOT the blackboard event log)
+.claude/session.log
+*.session.log
