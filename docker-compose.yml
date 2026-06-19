@@ -41,6 +41,13 @@ services:
     ports:
       - "4000:4000"
     environment:
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONUNBUFFERED: "1"
       BLACKBOARD_ROOT: /bb
+    volumes:
+      - .:/workspace
+      - ${BLACKBOARD_HOST_PATH:-./.claude/blackboard}:/bb
     profiles:
       - web   # opt-in: `docker compose --profile web up web`
+              # Set BLACKBOARD_HOST_PATH to use an external blackboard:
+              #   BLACKBOARD_HOST_PATH=/path/to/.claude/blackboard docker compose --profile web up web
