@@ -48,7 +48,7 @@ services:
     volumes:
       # Source files (hot-reload via WATCHPACK_POLLING)
       - ./packages/web/src:/app/src
-      - ./packages/web/next.config.ts:/app/next.config.ts
+      - ./packages/web/next.config.mjs:/app/next.config.mjs
       - ./packages/web/tsconfig.json:/app/tsconfig.json
       - ./packages/web/tailwind.config.ts:/app/tailwind.config.ts
       - ./packages/web/postcss.config.js:/app/postcss.config.js
