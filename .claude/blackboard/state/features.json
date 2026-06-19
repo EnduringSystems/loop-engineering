@@ -1,1 +1,19 @@
-{"version":"1","features":{"feat-web-dashboard":{"name":"Founder Web Dashboard","product":"loop-engineering","status":"planned","owner_loop":"frontend-specialist","updated":"2026-06-19T03:00:19Z"},"feat-api-shim":{"name":"Web File-Serving API Shim","product":"loop-engineering","status":"planned","owner_loop":"backend-specialist","updated":"2026-06-19T03:00:19Z"}}}
+{
+  "version": "1",
+  "features": {
+    "feat-web-dashboard": {
+      "name": "Founder Web Dashboard",
+      "product": "loop-engineering",
+      "status": "beta",
+      "owner_loop": "frontend-specialist",
+      "updated": "2026-06-18T09:00:00Z"
+    },
+    "feat-api-shim": {
+      "name": "Web File-Serving API Shim",
+      "product": "loop-engineering",
+      "status": "beta",
+      "owner_loop": "backend-specialist",
+      "updated": "2026-06-18T09:00:00Z"
+    }
+  }
+}

@@ -37,11 +37,10 @@ services:
   web:
     <<: *workspace
     working_dir: /workspace/packages/web
-    command: >
-      bash -c "echo 'Web dashboard not yet built — see packages/web/README.md for the build spec.'
-               && echo 'Run the CLI with: docker compose run --rm cli loopctl'
-               && sleep infinity"
+    command: bash -c "npm install && npm run dev"
     ports:
       - "4000:4000"
+    environment:
+      BLACKBOARD_ROOT: /bb
     profiles:
       - web   # opt-in: `docker compose --profile web up web`

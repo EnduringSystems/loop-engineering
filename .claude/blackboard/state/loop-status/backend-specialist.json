@@ -1,0 +1,16 @@
+{
+  "loop": "backend-specialist",
+  "status": "idle",
+  "current_task": null,
+  "since": "2026-06-19T03:05:05Z",
+  "artifact_ids": [
+    "packages/web/src/app/api/blackboard/loops/route.ts",
+    "packages/web/src/app/api/blackboard/features/route.ts",
+    "packages/web/src/app/api/blackboard/escalations/route.ts",
+    "packages/web/src/app/api/blackboard/events/route.ts",
+    "packages/web/src/app/api/blackboard/directive/route.ts",
+    "packages/web/src/app/api/blackboard/resolve/route.ts"
+  ],
+  "next_action": "await next task",
+  "blocked_on": null
+}

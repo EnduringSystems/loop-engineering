@@ -1,0 +1,9 @@
+{
+  "loop": "qa-specialist",
+  "status": "active",
+  "current_task": "qa-web-dashboard",
+  "since": "2026-06-18T00:00:00Z",
+  "artifact_ids": [],
+  "next_action": "verify all 15 web dashboard files, fix TypeScript issues, update feature statuses",
+  "blocked_on": null
+}
