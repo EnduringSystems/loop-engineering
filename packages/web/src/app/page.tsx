@@ -86,37 +86,77 @@ export default function Home() {
           <StatsBar />
         </header>
 
-        {/* ── 3-Column Dashboard Body ── */}
+        {/* ── Dashboard Body — view switches on nav ── */}
         <div className="flex flex-1 min-h-0 overflow-hidden">
 
-          {/* Column 1 — Autonomous Loops */}
-          <div className="w-[400px] shrink-0 border-r border-[#1e2533] p-4 overflow-y-auto">
-            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">
-              Autonomous Loops
-            </p>
-            <LoopGrid />
-          </div>
+          {/* ── OVERVIEW (Loops) — 3-column default ── */}
+          {activeNav === "loops" && (
+            <>
+              <div className="w-[400px] shrink-0 border-r border-[#1e2533] p-4 overflow-y-auto">
+                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">
+                  Autonomous Loops
+                </p>
+                <LoopGrid />
+              </div>
+              <div className="flex-1 min-w-0 border-r border-[#1e2533] p-4 overflow-y-auto space-y-6">
+                <div>
+                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">
+                    Feature Lifecycle Board
+                  </p>
+                  <FeatureKanban />
+                </div>
+                <div className="border-t border-[#1e2533] pt-5">
+                  <EventStream />
+                </div>
+              </div>
+              <div className="w-[320px] shrink-0 p-4 overflow-y-auto space-y-5">
+                <EscalationQueue />
+                <div className="border-t border-[#1e2533] pt-4">
+                  <DirectiveComposer />
+                </div>
+              </div>
+            </>
+          )}
 
-          {/* Column 2 — Feature Lifecycle + Event Stream */}
-          <div className="flex-1 min-w-0 border-r border-[#1e2533] p-4 overflow-y-auto space-y-6">
-            <div>
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">
+          {/* ── FEATURES — full-width kanban ── */}
+          {activeNav === "features" && (
+            <div className="flex-1 min-w-0 p-6 overflow-y-auto">
+              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">
                 Feature Lifecycle Board
               </p>
               <FeatureKanban />
             </div>
-            <div className="border-t border-[#1e2533] pt-5">
-              <EventStream />
-            </div>
-          </div>
+          )}
 
-          {/* Column 3 — Escalation + Directive */}
-          <div className="w-[320px] shrink-0 p-4 overflow-y-auto space-y-5">
-            <EscalationQueue />
-            <div className="border-t border-[#1e2533] pt-4">
+          {/* ── ESCALATION — full-width queue ── */}
+          {activeNav === "escalation" && (
+            <div className="flex-1 min-w-0 p-6 overflow-y-auto">
+              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">
+                Escalation Queue
+              </p>
+              <EscalationQueue />
+            </div>
+          )}
+
+          {/* ── DIRECTIVES — full-width composer ── */}
+          {activeNav === "directives" && (
+            <div className="flex-1 min-w-0 p-6 overflow-y-auto max-w-2xl mx-auto">
+              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">
+                Directive Composer
+              </p>
               <DirectiveComposer />
             </div>
-          </div>
+          )}
+
+          {/* ── EVENTS — full-width event stream ── */}
+          {activeNav === "events" && (
+            <div className="flex-1 min-w-0 p-6 overflow-y-auto">
+              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">
+                Event Stream
+              </p>
+              <EventStream />
+            </div>
+          )}
 
         </div>
       </div>

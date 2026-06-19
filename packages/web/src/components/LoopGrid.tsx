@@ -90,7 +90,7 @@ export default function LoopGrid() {
         <div className="text-gray-500 text-sm italic">No loop data available.</div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {loops.map((loop) => {
           const stale = isStale(loop.since);
           const borderClass = stale
@@ -102,8 +102,8 @@ export default function LoopGrid() {
               key={loop.loop}
               className={`border rounded-lg p-4 bg-[#111111] space-y-2 ${borderClass}`}
             >
-              <div className="flex items-center justify-between gap-2">
-                <span className="font-bold text-white truncate">{loop.loop}</span>
+              <div className="flex items-start justify-between gap-2">
+                <span className="font-bold text-white text-sm leading-tight break-all">{loop.loop}</span>
                 <span
                   className={`text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${
                     STATUS_COLORS[loop.status] ?? "bg-gray-600 text-white"
