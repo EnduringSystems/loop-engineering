@@ -1,0 +1,45 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(**)",
+      "Edit(.claude/blackboard/**)",
+      "Bash(git *)",
+      "Bash(gh *)",
+      "Bash(find .claude/blackboard/**)",
+      "Bash(mv .claude/blackboard/state/tasks/pending/* .claude/blackboard/state/tasks/claimed/)"
+    ],
+    "deny": [
+      "Edit(.claude/blackboard/state/features.json)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash(curl *) | Bash(gh api * --method POST *) | Bash(sendmail *) | Bash(mail *) | Bash(npm publish *) | Bash(gh release *)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/feature-gate-check.sh",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/session-start.sh",
+            "timeout": 3000
+          }
+        ]
+      }
+    ]
+  },
+  "env": {
+    "BLACKBOARD_ROOT": ".claude/blackboard",
+    "FEATURES_FILE": ".claude/blackboard/state/features.json",
+    "EVENTS_LOG": ".claude/blackboard/events/loop.log"
+  }
+}
