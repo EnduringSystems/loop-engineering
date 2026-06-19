@@ -1,53 +1,63 @@
 name: loop-engineering
 
-x-workspace: &workspace
-  build:
-    context: .
-    dockerfile: Dockerfile
-  volumes:
-    - .:/workspace
-  working_dir: /workspace
-  environment:
-    PYTHONDONTWRITEBYTECODE: "1"
-    PYTHONUNBUFFERED: "1"
-
 services:
-  # ── loopctl — founder CLI dashboard ─────────────────────────────────────────
+  # ── loopctl — founder CLI TUI dashboard ──────────────────────────────────────
   #
-  # Usage:
-  #   docker compose run --rm cli loopctl           # live dashboard
-  #   docker compose run --rm cli loopctl status    # one-shot snapshot
-  #   docker compose run --rm cli loopctl steer cto-orchestrator "Prioritize cert chain"
-  #   docker compose run --rm cli loopctl resolve esc-abc123 "Approved for beta"
-  #   docker compose run --rm cli loopctl broadcast "All loops: re-read aspirational docs"
-  #   docker compose run --rm cli loopctl logs -f
+  # Runtime: Python 3.12-slim + lecore + loopctl (baked in at build time).
+  # Source is volume-mounted so edits are live without rebuilding.
+  #
+  # Usage (from any directory):
+  #   docker compose -f /path/to/docker-compose.yml \
+  #     --project-directory /path/to/loop-engineering \
+  #     run --rm -it -v /path/to/.claude/blackboard:/bb \
+  #     cli loopctl --blackboard /bb
   #
   cli:
-    <<: *workspace
+    build:
+      context: .
+      dockerfile: Dockerfile.cli
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    environment:
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONUNBUFFERED: "1"
     command: loopctl
     stdin_open: true
     tty: true
 
-  # ── web dashboard — to be built by the dev loops ────────────────────────────
+  # ── web — founder web dashboard (Next.js) ────────────────────────────────────
   #
-  # This service is a placeholder. When the web package is built, update this
-  # to run `npm run dev` (or the appropriate command).
-  # The web dashboard reads the same blackboard root as the CLI.
+  # Runtime: Node 22-slim. node_modules baked in at image build time —
+  # startup is instant (no npm install at runtime).
+  #
+  # Source files are bind-mounted selectively so edits are live.
+  # node_modules live only inside the image layer (never on the laptop).
+  #
+  # Set BLACKBOARD_HOST_PATH to point at an external blackboard repo:
+  #   BLACKBOARD_HOST_PATH=/path/to/.claude/blackboard \
+  #   docker compose --profile web up web
+  #
+  # Default: uses loop-engineering's own blackboard.
   #
   web:
-    <<: *workspace
-    working_dir: /workspace/packages/web
-    command: bash -c "npm install && npm run dev"
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    working_dir: /app
+    volumes:
+      # Source files (hot-reload via WATCHPACK_POLLING)
+      - ./packages/web/src:/app/src
+      - ./packages/web/next.config.ts:/app/next.config.ts
+      - ./packages/web/tsconfig.json:/app/tsconfig.json
+      - ./packages/web/tailwind.config.ts:/app/tailwind.config.ts
+      - ./packages/web/postcss.config.js:/app/postcss.config.js
+      # Blackboard (read by API routes via BLACKBOARD_ROOT env)
+      - ${BLACKBOARD_HOST_PATH:-./.claude/blackboard}:/bb
+    environment:
+      BLACKBOARD_ROOT: /bb
+      NODE_ENV: development
     ports:
       - "4000:4000"
-    environment:
-      PYTHONDONTWRITEBYTECODE: "1"
-      PYTHONUNBUFFERED: "1"
-      BLACKBOARD_ROOT: /bb
-    volumes:
-      - .:/workspace
-      - ${BLACKBOARD_HOST_PATH:-./.claude/blackboard}:/bb
     profiles:
-      - web   # opt-in: `docker compose --profile web up web`
-              # Set BLACKBOARD_HOST_PATH to use an external blackboard:
-              #   BLACKBOARD_HOST_PATH=/path/to/.claude/blackboard docker compose --profile web up web
+      - web
